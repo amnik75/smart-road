@@ -4,21 +4,25 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Max
-
+import geopy.distance
+import sys
 
 class GetCuLocation(APIView):
 
     def post(self,request,format = None):
         plate_char = request.POST["plate_char"]
         plate_num = request.POST["plate_num"]
+        year = int(request.POST["year"])
+        month = int(request.POST["month"])
+        day = int(request.POST["day"])
         args = Pass.objects.filter(plate_char = plate_char,plate_num = plate_num)# or whatever arbitrary queryset
         max = 0
         l = None
         for i in args:
-            if int(i.camera.sequence) > max:
+            if int(i.camera.sequence) > max and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 max = i.camera.sequence
                 l = i.camera
-                break
+
         if l is not None:
             serializer = CameraSerializer(l)
             return Response(serializer.data)
@@ -32,12 +36,16 @@ class GetLocations(APIView):
         plate_num = request.POST["plate_num"]
         hour = int(request.POST["hour"])
         minute = int(request.POST["minute"])
+        year = int(request.POST["year"])
+        month = int(request.POST["month"])
+        day = int(request.POST["day"])
+
         args = Pass.objects.filter(plate_char = plate_char,plate_num = plate_num)# or whatever arbitrary queryset
         temp = list()
         for i in args:
-            if int(i.hour) < hour:
+            if int(i.hour) < hour and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 temp.append(i)
-            elif int(i.hour) == hour and int(i.minute) <= minute:
+            elif int(i.hour) == hour and int(i.minute) <= minute and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 temp.append(i)
 
         if len(temp) != 0:
@@ -55,6 +63,9 @@ class GetNumCar(APIView):
         h = int(request.POST["hour"])
         m = int(request.POST["minute"])
         t = int(request.POST["period"])
+        year = int(request.POST["year"])
+        month = int(request.POST["month"])
+        day = int(request.POST["day"])
         tm = None
         p = Pass.objects.filter(camera_id=cam_id)
         temp = list()
@@ -62,14 +73,14 @@ class GetNumCar(APIView):
         if m >= t:
             tm = m - t
             for i in p:
-                if  int(i.hour) == h and int(i.minute) <= m and int(i.minute) >= tm:
+                if  int(i.hour) == h and int(i.minute) <= m and int(i.minute) >= tm and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                     temp.append(i)
         else:
             tm = 60 - (int(t) - int(m))
             for i in p:
-                if  int(i.hour) == h  and int(i.minute) <= m:
+                if  int(i.hour) == h  and int(i.minute) <= m and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                     temp.append(i)
-                elif int(i.hour) == h - 1 and int(i.minute) >= tm:
+                elif int(i.hour) == h - 1 and int(i.minute) >= tm and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                     temp.append(i)
 
         if len(temp) != 0:
@@ -84,22 +95,38 @@ class GetSpeedCar(APIView):
         plate_num = request.POST["plate_num"]
         hour = int(request.POST["hour"])
         minute = int(request.POST["minute"])
-        args = Pass.objects.filter(plate_char = plate_char,plate_num = plate_num)# or whatever arbitrary queryset
-        total = 0
-        num = 0
+        year = int(request.POST["year"])
+        month = int(request.POST["month"])
+        day = int(request.POST["day"])
+        args = Pass.objects.filter(plate_char = plate_char,plate_num = plate_num)
+        max = 0
+        min = sys.maxsize
+        ma = None
+        mi = None
         for i in args:
-            if int(i.hour) < hour:
-                num = num + 1
-                total = total + int(i.speed)
-            elif int(i.hour) == hour and int(i.minute) <= minute:
-                num = num + 1
-                total = total + int(i.speed)
-        if num != 0:
-            return Response(total/num)
-        else:
-            return Response("There are not any data!")
+            if int(i.hour) < hour and int(i.camera.sequence) > max and int(i.hour) < hour and int(i.day) == day and int(i.year) == year and int(i.month) == month:
+                max = i.camera.sequence
+                ma = i.camera
+            elif int(i.hour) < hour and int(i.camera.sequence) < min and int(i.day) == day and int(i.year) == year and int(i.month) == month:
+                min = i.camera.sequence
+                mi = i.camera
+            elif  int(i.camera.sequence) > max and int(i.hour) == hour and int(i.minute) <= minute and int(i.day) == day and int(i.year) == year and int(i.month) == month:
+                max = i.camera.sequence
+                ma = i.camera
+            elif  int(i.camera.sequence) < min and int(i.hour) == hour and int(i.minute) <= minute and int(i.day) == day and int(i.year) == year and int(i.month) == month:
+                min = i.camera.sequence
+                mi = i.camera
+        if ma == None or mi == None:
+            return Response("There are not any data!")\
 
+        coords_1 = (ma.latitude,ma.longitude)
+        coords_2 = (mi.latitude,mi.longitude)
+        d =  geopy.distance.vincenty(coords_1, coords_2).km
+        t = ma.hour - mi.hour
+        if t == 0:
+            t = 1
 
+        return Response(d/t)
 
 class CreateCamera(APIView):
     def post(self, request, format= None):

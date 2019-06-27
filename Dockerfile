@@ -1,7 +1,7 @@
 FROM python:3.6
 ENV PYTHONUNBUFFERED 1
 
-RUN pip3 install virtualenv
+RUN pip3 install virtualenv geopy
 
 ADD requirements.txt /config/
 

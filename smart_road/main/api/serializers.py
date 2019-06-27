@@ -4,7 +4,7 @@ from main.models import Pass,Camera,Road
 class PassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pass
-        fields = ('pass_id', 'plate_char', 'plate_num', 'speed', 'hour','minute','longitude','latitude')
+        fields = ('pass_id', 'plate_char', 'plate_num', 'speed', 'hour','minute','longitude','latitude','year','month','day')
 
 class CameraSerializer(serializers.ModelSerializer):
     class Meta:
