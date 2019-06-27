@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'smartroaddb',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
+        'HOST': '172.30.171.81',
         'PORT': "5432",
     }
 }
