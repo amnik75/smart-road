@@ -77,9 +77,9 @@ WSGI_APPLICATION = 'smart_road.wsgi.application'
 DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smartroaddb',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': 'smartdb',
+        'USER': 'amnik',
+        'PASSWORD': '1375',
         'HOST': '172.30.171.81',
         'PORT': "5432",
     }
