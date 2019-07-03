@@ -9,4 +9,6 @@ urlpatterns = [
     path('createCamera/', views.CreateCamera.as_view()),
     path('updateCamera/', views.UpdateCamera.as_view()),
     path('createRoad/', views.CreateRoad.as_view()),
+    path('getRoads/', views.GetRoads.as_view()),
+    path('getCameras/', views.GetCameras.as_view()),
 ]
