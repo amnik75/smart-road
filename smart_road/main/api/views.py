@@ -165,3 +165,21 @@ class CreateRoad(APIView):
             serializer.save()
             return Response("The road is registered successfully!", status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_200_OK)
+
+class GetRoads(APIView):
+
+    def get(self, request, format= None):
+        r = Road.objects.all()
+        serializer = RoadSerializer(r,many=True)
+        return Response(serializer.data)
+
+class GetCameras(APIView):
+    def post(self, request, format= None):
+        rid = request.POST["roadID"]
+        r = Camera.objects.filter(road_id=rid)
+        serializer = CameraSerializer(r,many=True)
+        return Response(serializer.data)
+
+
+
+        
