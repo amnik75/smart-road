@@ -1,5 +1,4 @@
 geopy
-django-cors-headers
 django
 djangorestframework
 psycopg2-binary
