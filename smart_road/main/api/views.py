@@ -20,7 +20,7 @@ class GetCuLocation(APIView):
         l = None
         for i in args:
             if int(i.camera.sequence) > max and int(i.day) == day and int(i.year) == year and int(i.month) == month:
-                max = i.camera.sequence
+                max = int(i.camera.sequence)
                 l = i.camera
 
         if l is not None:
