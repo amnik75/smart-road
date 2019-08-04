@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': 'smartdb',
         'USER': 'amnik',
         'PASSWORD': '1375',
-        'HOST': '172.30.171.81',
+        'HOST': '172.30.2.51',
         'PORT': "5432",
     }
 }
