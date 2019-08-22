@@ -107,12 +107,12 @@ class GetSpeedCar(APIView):
             if int(i.hour) < hour and int(i.camera.sequence) > max and int(i.hour) < hour and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 max = i.camera.sequence
                 ma = i.camera
-            elif int(i.hour) < hour and int(i.camera.sequence) < min and int(i.day) == day and int(i.year) == year and int(i.month) == month:
-                min = i.camera.sequence
-                mi = i.camera
             elif  int(i.camera.sequence) > max and int(i.hour) == hour and int(i.minute) <= minute and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 max = i.camera.sequence
                 ma = i.camera
+            if int(i.hour) < hour and int(i.camera.sequence) < min and int(i.day) == day and int(i.year) == year and int(i.month) == month:
+                min = i.camera.sequence
+                mi = i.camera
             elif  int(i.camera.sequence) < min and int(i.hour) == hour and int(i.minute) <= minute and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 min = i.camera.sequence
                 mi = i.camera
@@ -125,6 +125,8 @@ class GetSpeedCar(APIView):
         t = ma.hour - mi.hour
         if t == 0:
             t = 1
+        elif d == 0:
+            return Response("There are not enough data!")
 
         return Response(d/t)
 
