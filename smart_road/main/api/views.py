@@ -101,21 +101,28 @@ class GetSpeedCar(APIView):
         args = Pass.objects.filter(plate_char = plate_char,plate_num = plate_num)
         max = 0
         min = sys.maxsize
+        print("min: " + str(min))
         ma = None
         mi = None
         for i in args:
+            pritnt("exist")
+            print(i.hour + "****" + i.camera.sequence + "****" + i.day + "****" + i.year + "****" + i.month)
             if int(i.hour) < hour and int(i.camera.sequence) > max and int(i.hour) < hour and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 max = i.camera.sequence
                 ma = i.camera
+                print("max: " + i.camera.sequence)
             elif  int(i.camera.sequence) > max and int(i.hour) == hour and int(i.minute) <= minute and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 max = i.camera.sequence
                 ma = i.camera
+                print("max: " + i.camera.sequence)
             if int(i.hour) < hour and int(i.camera.sequence) < min and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 min = i.camera.sequence
                 mi = i.camera
+                print("min: " + i.camera.sequence)
             elif  int(i.camera.sequence) < min and int(i.hour) == hour and int(i.minute) <= minute and int(i.day) == day and int(i.year) == year and int(i.month) == month:
                 min = i.camera.sequence
                 mi = i.camera
+                print("min: " + i.camera.sequence)
         if ma == None or mi == None:
             return Response("There are not any data!")\
 
